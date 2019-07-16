@@ -1,3 +1,34 @@
+# wide
+detector.c
+void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, int ngpus, int clear, int dont_show)
+{
+//...
+    	while(get_current_batch(net) < net.max_batches){
+		if(l.random && count++%10 == 0){
+                	printf("Resizing\n");
+			//int dim = (rand() % 12 + (init_w/32 - 5)) * 32;	// +-160
+            		//int dim = (rand() % 4 + 16) * 32;
+			//if (get_current_batch(net)+100 > net.max_batches) dim = 544;
+			int random_val = rand() % 12;
+			int dim_w = (random_val + (init_w / 32 - 5)) * 32;	// +-160
+			int dim_h = (random_val + (init_h / 32 - 5)) * 32;	// +-160
+			if (l.random == 2){
+			float ratio_wh = 1.0 * init_w / init_h;
+			random_val = rand() % 9;
+			int base_h = (random_val + (init_h / 32 - 4));
+			dim_h = base_h * 32;
+			dim_w = (int)(ratio_wh * base_h + 0.5) * 32;
+			}
+			if (l.random == 3){
+				float ratio_wh = 1.0 * init_w / init_h;
+				random_val = rand()%10;
+				int base_h = (random_val + (init_h / 16 - 4));
+				dim_h = base_h * 16;
+				dim_w = (int)(ratio_wh * base_h + 0.5) * 16;
+			}
+//...
+}
+
 # ignore_label
 @AlexeyAB Actually I added the feature of multiple ignore labels myself and it did improve mAP in my case of person detection. Just several changes, hope you can add this feature to help others.
 
