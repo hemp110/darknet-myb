@@ -1,3 +1,76 @@
+# ignore_label
+@AlexeyAB Actually I added the feature of multiple ignore labels myself and it did improve mAP in my case of person detection. Just several changes, hope you can add this feature to help others.
+
+darknet.h
+```
+struct layer{
+//...
+    int *ignore_label;
+    int num_ignore_label;
+//...
+}
+
+```
+layer.c
+```
+void free_layer(layer l)
+{
+//...
+	if (l.ignore_label)       free(l.ignore_label);
+//...
+}
+```
+parser.c
+```
+layer parse_yolo(list *options, size_params params)
+{
+//...
+    a = option_find_str(options, "ignore_label", 0);
+    if(a) {
+        printf("ignore_label=%s\n", a);
+        l.ignore_label = parse_yolo_mask(a, &l.num_ignore_label);
+        printf("num_ignore_label=%d\n", l.num_ignore_label);
+    }
+    return l;
+}
+```
+
+yolo_layer.c
+```
+layer make_yolo_layer(int batch, int w, int h, int n, int total, int *mask, int classes, int max_boxes)
+{
+//...
+    l.ignore_label = 0;
+    l.num_ignore_label = 0;
+//...
+}
+void forward_yolo_layer(const layer l, network_state state)
+{
+//...
+           int mask_n = int_index(l.mask, best_n, l.n);
+            if(mask_n >= 0){
+                int class_id = state.truth[t*(4 + 1) + b*l.truths + 4];
+                if (l.map) class_id = l.map[class_id];
+                int ll=0, ignore = 0;
+                for (ll=0;ll<l.num_ignore_label;ll++)
+                    if (class_id == l.ignore_label[ll]) {
+                    printf("ignoring image %d bbox %d with label %d\n",b,t,class_id);
+                    ignore=1;}
+                if (ignore) continue;
+//...
+}
+```
+
+yolov3.cfg
+```
+[yolo]
+#...
+#support multiple ingore labels
+ingore_label=0,1
+#...
+```
+
+
 # Yolo-v3 and Yolo-v2 for Windows and Linux
 ### (neural network for object detection)
 
