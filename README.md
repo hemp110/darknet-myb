@@ -1,5 +1,6 @@
 # wide
 detector.c
+```
 void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, int ngpus, int clear, int dont_show)
 {
 //...
@@ -28,6 +29,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 			}
 //...
 }
+```
 
 # ignore_label
 @AlexeyAB Actually I added the feature of multiple ignore labels myself and it did improve mAP in my case of person detection. Just several changes, hope you can add this feature to help others.
